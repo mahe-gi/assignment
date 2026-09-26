@@ -88,7 +88,14 @@ export async function POST(
       let userObj: { id: number; name: string; email: string };
 
       if (sessionUser) {
-        // Option A: Logged-in user accepts invitation
+        // Enforce that the logged-in user matches the invited email
+        if (sessionUser.email.toLowerCase() !== invite.email.toLowerCase()) {
+          await client.query('ROLLBACK');
+          return NextResponse.json(
+            { error: `You are signed in as ${sessionUser.email}, but this invite is for ${invite.email}. Please log out first to register as ${invite.email}.` },
+            { status: 403 }
+          );
+        }
         targetUserId = sessionUser.userId;
         userObj = { id: sessionUser.userId, name: sessionUser.name, email: sessionUser.email };
       } else {
@@ -121,11 +128,11 @@ export async function POST(
         targetUserId = userObj.id;
       }
 
-      // Add to org_members
+      // Add to org_members (Never overwrite or demote existing role)
       await client.query(
         `INSERT INTO org_members (user_id, org_id, role_id)
          VALUES ($1, $2, $3)
-         ON CONFLICT (user_id, org_id) DO UPDATE SET role_id = EXCLUDED.role_id`,
+         ON CONFLICT (user_id, org_id) DO NOTHING`,
         [targetUserId, invite.org_id, invite.role_id]
       );
 
