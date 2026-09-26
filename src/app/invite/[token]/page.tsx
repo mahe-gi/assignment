@@ -145,18 +145,40 @@ export default function InviteAcceptPage() {
               </div>
             ) : currentUser ? (
               /* Already logged in user accepting */
-              <form onSubmit={handleAccept}>
-                <div className="mb-4 p-3 bg-blue-50 text-blue-700 text-xs rounded-lg">
-                  You are currently signed in as <strong>{currentUser.email}</strong>. Clicking accept will add this organization to your account.
-                </div>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="w-full py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-medium text-sm rounded-lg transition shadow disabled:opacity-50"
-                >
-                  {submitting ? 'Joining Organization...' : `Join ${inviteData.orgName}`}
-                </button>
-              </form>
+              <div className="space-y-4">
+                {currentUser.email.toLowerCase() !== inviteData.email.toLowerCase() ? (
+                  <div className="p-3 bg-amber-50 border border-amber-200 text-amber-900 text-xs rounded-lg space-y-2">
+                    <p>
+                      ⚠️ You are currently signed in as <strong>{currentUser.email}</strong>, but this invitation was sent to <strong>{inviteData.email}</strong>.
+                    </p>
+                    <div className="pt-2 border-t border-amber-200 flex flex-col gap-2">
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          await fetch('/api/auth/logout', { method: 'POST' });
+                          window.location.reload();
+                        }}
+                        className="w-full py-2 bg-orange-600 hover:bg-orange-700 text-white rounded font-medium text-xs shadow"
+                      >
+                        Log Out to Register as {inviteData.email}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <form onSubmit={handleAccept}>
+                    <div className="mb-4 p-3 bg-blue-50 text-blue-700 text-xs rounded-lg">
+                      You are currently signed in as <strong>{currentUser.email}</strong>. Clicking accept will add this organization to your account.
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={submitting}
+                      className="w-full py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-medium text-sm rounded-lg transition shadow disabled:opacity-50"
+                    >
+                      {submitting ? 'Joining Organization...' : `Join ${inviteData.orgName}`}
+                    </button>
+                  </form>
+                )}
+              </div>
             ) : (
               /* New user setting password */
               <form onSubmit={handleAccept} className="space-y-4">
