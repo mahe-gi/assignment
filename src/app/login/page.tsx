@@ -37,33 +37,6 @@ export default function LoginPage() {
     }
   };
 
-  const quickLogin = async (quickEmail: string) => {
-    setEmail(quickEmail);
-    setPassword('password123');
-    setLoading(true);
-    setError('');
-
-    try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: quickEmail, password: 'password123' }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || 'Failed to login');
-      }
-
-      router.push('/');
-      router.refresh();
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="min-h-screen flex flex-col justify-center items-center px-4 py-12 bg-slate-100">
       <div className="w-full max-w-md bg-white rounded-xl shadow-lg border border-slate-200 p-8">
@@ -121,53 +94,8 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* Demo Fast Login Buttons */}
-        <div className="mt-6 pt-6 border-t border-slate-200">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 text-center">
-            ⚡ Quick Demo Logins
-          </p>
-          <div className="grid grid-cols-1 gap-2 text-xs">
-            <button
-              onClick={() => quickLogin('alice@example.com')}
-              className="p-2 border border-slate-200 rounded hover:bg-slate-50 text-left flex justify-between items-center"
-            >
-              <div>
-                <span className="font-semibold text-slate-800">Alice Admin</span>
-                <span className="block text-[11px] text-slate-500">Acme Corp (Admin)</span>
-              </div>
-              <span className="text-[10px] bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded font-mono">
-                Log In
-              </span>
-            </button>
-            <button
-              onClick={() => quickLogin('bob@example.com')}
-              className="p-2 border border-slate-200 rounded hover:bg-slate-50 text-left flex justify-between items-center"
-            >
-              <div>
-                <span className="font-semibold text-slate-800">Bob Member</span>
-                <span className="block text-[11px] text-slate-500">Acme Corp (Member)</span>
-              </div>
-              <span className="text-[10px] bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded font-mono">
-                Log In
-              </span>
-            </button>
-            <button
-              onClick={() => quickLogin('charlie@example.com')}
-              className="p-2 border border-slate-200 rounded hover:bg-slate-50 text-left flex justify-between items-center"
-            >
-              <div>
-                <span className="font-semibold text-slate-800">Charlie Multi-Org</span>
-                <span className="block text-[11px] text-slate-500">Acme (Member) & Beta (Admin)</span>
-              </div>
-              <span className="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-mono">
-                Log In
-              </span>
-            </button>
-          </div>
-        </div>
-
         {/* Link to Signup */}
-        <div className="mt-6 text-center text-sm text-slate-600">
+        <div className="mt-6 text-center text-sm text-slate-600 border-t border-slate-200 pt-6">
           New to RemoAsset?{' '}
           <Link href="/signup" className="text-orange-600 font-semibold hover:underline">
             Create an Organization
