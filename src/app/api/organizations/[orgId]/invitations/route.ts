@@ -132,8 +132,10 @@ export async function POST(
     );
 
     const invite = result.rows[0];
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001';
-    const inviteUrl = `${appUrl}/invite/${token}`;
+    const host = req.headers.get('x-forwarded-host') || req.headers.get('host');
+    const proto = req.headers.get('x-forwarded-proto') || (host?.includes('localhost') ? 'http' : 'https');
+    const origin = host ? `${proto}://${host}` : (req.nextUrl.origin || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001');
+    const inviteUrl = `${origin}/invite/${token}`;
 
     return NextResponse.json({
       success: true,

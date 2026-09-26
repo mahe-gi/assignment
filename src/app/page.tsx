@@ -156,7 +156,8 @@ export default function DashboardPage() {
         throw new Error(data.error || 'Failed to send invite');
       }
 
-      setGeneratedInviteUrl(data.invitation.inviteUrl);
+      const fullUrl = `${window.location.origin}/invite/${data.invitation.token}`;
+      setGeneratedInviteUrl(fullUrl);
       setNotice(`Invitation generated for ${inviteEmail}!`);
 
       // Refresh invitations list
